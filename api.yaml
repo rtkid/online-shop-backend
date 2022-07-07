@@ -1,0 +1,626 @@
+openapi: "3.0.0"
+
+info:
+  title: POTEA API
+  description: REST API for potea app
+  version: "1.0.0"
+
+servers:
+  - url: "http://localhost:8800"
+    description: local server
+
+schemes: [http]
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    Plant:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+
+    Notification:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        img:
+          type: string
+        date:
+          type: string
+
+    Transaction:
+      type: object
+      properties:
+        plantIds:
+          type: [string]
+        userId:
+          type: string
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: User
+    description: User API
+  - name: Plant
+    description: Plant API
+  - name: Notification
+    description: Notification API
+  - name: Transaction
+    description: Transaction API
+
+paths:
+  /api/user/register:
+    post:
+      summary: register new user
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+
+  /api/user/login:
+    post:
+      summary: login user in account
+      tags:
+        - User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+
+  /api/user/auth:
+    get:
+      summary: authorize user
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+
+  /api/user/{_id}:
+    get:
+      summary: get user by id
+      tags:
+        - User
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+    delete:
+      summary: delete user by id
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/user/update:
+    put:
+      summary: update user
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    password:
+                      type: string
+                    picture:
+                      type: string
+                    fullName:
+                      type: string
+                    dateOfBirth:
+                      type: string
+                    gender:
+                      type: string
+                    pin:
+                      type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/user:
+    get:
+      summary: get all users
+      tags:
+        - User
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+    delete:
+      summary: delete all users
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/user/wishlist/add/{plantId}:
+    patch:
+      summary: add plant to wishlist
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: plantId
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/user/wishlist/remove/{plantId}:
+    patch:
+      summary: remove plant from wishlist
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: plantId
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/plant/add:
+    post:
+      summary: add plant
+      tags:
+        - Plant
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Plant"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/plant/{_id}:
+    get:
+      summary: get plant by id
+      tags:
+        - Plant
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Plant"
+
+    delete:
+      summary: delete plant by id
+      tags:
+        - Plant
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/plant:
+    get:
+      summary: get all plants
+      tags:
+        - Plant
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Plant"
+
+    delete:
+      summary: delete all plants
+      tags:
+        - Plant
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/plant/update:
+    put:
+      summary: update plant
+      tags:
+        - Plant
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                plant:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    price:
+                      type: number
+                    previewPicture:
+                      type: string
+                    pictures:
+                      type: array
+                      items:
+                        type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/plant/rate/{_id}:
+    patch:
+      summary: rate plant
+      tags:
+        - Plant
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  type: number
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/plant/buy/{_id}:
+    patch:
+      summary: byu plant
+      tags:
+        - Plant
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/notification/add:
+    post:
+      summary: add notification
+      tags:
+        - Notification
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Notification"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/notification:
+    get:
+      summary: get all notifications
+      tags:
+        - Notification
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+    delete:
+      summary: delete all notifications
+      tags:
+        - Notification
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/notification/{_id}:
+    delete:
+      summary: delete notification by id
+      tags:
+        - Notification
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
+
+  /api/transaction/register:
+    post:
+      summary: register new transaction
+      tags:
+        - Transaction
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                plantIds:
+                  type: array
+                  items:
+                    type: string
+
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  price:
+                    type: number
+
+  /api/transaction:
+    get:
+      summary: get all transactions
+      tags:
+        - Transaction
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+
+  /api/transaction/{_id}:
+    delete:
+      summary: delete transaction by id
+      tags:
+        - Transaction
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: _id
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text:
+                    type: string
